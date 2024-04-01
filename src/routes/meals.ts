@@ -13,6 +13,30 @@ export async function mealsRoutes(app: FastifyInstance) {
     return { meals }
   })
 
+  app.get(
+    '/:id',
+    { preHandler: [checkSessionIdExists] },
+    async (request, reply) => {
+      const transactionParamsSchema = z.object({
+        id: z.string(),
+      })
+
+      const { id } = transactionParamsSchema.parse(request.params)
+
+      const { sessionId } = request.cookies
+
+      const meal = await knex('meals')
+        .select()
+        .where({
+          id,
+          session_id: sessionId,
+        })
+        .first()
+
+      return reply.send({ meal })
+    },
+  )
+
   app.post('/', async (request, reply) => {
     const mealSchema = z.object({
       name: z.string(),
