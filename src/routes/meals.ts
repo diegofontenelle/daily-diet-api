@@ -33,11 +33,12 @@ export async function mealsRoutes(app: FastifyInstance) {
       })
     }
 
-    knex('meals').insert({
+    await knex('meals').insert({
       id: randomUUID(),
       name,
       description,
-      isCheatMeal,
+      is_cheat_meal: isCheatMeal,
+      session_id: sessionId,
     })
 
     return reply.status(201).send()
