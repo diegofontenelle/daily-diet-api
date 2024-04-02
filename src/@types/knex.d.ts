@@ -9,7 +9,7 @@ declare module 'knex/types/tables' {
       description: string
       created_at: string
       is_cheat_meal: boolean
-      session_id?: string
+      session_id: string
     }
   }
 }
