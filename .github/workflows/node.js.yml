@@ -10,6 +10,9 @@ on:
 jobs:
   install-and-build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_CLIENT: sqlite
+      DATABASE_URL: db/test.db
 
     steps:
       - name: Checkout
