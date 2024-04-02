@@ -4,31 +4,27 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  - push
+  - pull_request
 
 jobs:
-  build:
-
+  install-and-build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: pnpm/action-setup@v3
-      with:
-        version: 8
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: pnpm install
-    - run: pnpm test
-    - run: pnpm build --if-present
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Install Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+  
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm build --if-present
