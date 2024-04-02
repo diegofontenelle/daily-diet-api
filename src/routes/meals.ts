@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { knex } from '../database'
 import { checkSessionIdExists } from '../middlewares/check-session-id-exists'
+import { getMealMetrics } from '../utils/get-meal-metrics'
 
 export async function mealsRoutes(app: FastifyInstance) {
   app.get('/', { preHandler: [checkSessionIdExists] }, async (request) => {
@@ -34,6 +35,23 @@ export async function mealsRoutes(app: FastifyInstance) {
         .first()
 
       return reply.send({ meal })
+    },
+  )
+
+  app.get(
+    '/metrics/',
+    { preHandler: [checkSessionIdExists] },
+    async (request, reply) => {
+      const { sessionId } = request.cookies
+
+      const meals = await knex('meals')
+        .select()
+        .where('session_id', sessionId)
+        .orderBy('created_at', 'asc')
+
+      const metrics = getMealMetrics(meals)
+
+      return reply.send({ metrics })
     },
   )
 
